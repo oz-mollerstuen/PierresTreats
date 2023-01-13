@@ -2,19 +2,19 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Bakery.Models;
+using PierresSweets.Models;
 using System.Threading.Tasks;
-using Bakery.ViewModels;
+using PierresSweets.ViewModels;
 
-namespace Bakery.Controllers
+namespace PierresSweets.Controllers
 {
   public class AccountController : Controller
   {
-    private readonly BakeryContext _db;
+    private readonly PierresSweetsContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public AccountController (UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BakeryContext db)
+    public AccountController (UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, PierresSweetsContext db)
     {
       _userManager = userManager;
       _signInManager = signInManager;
