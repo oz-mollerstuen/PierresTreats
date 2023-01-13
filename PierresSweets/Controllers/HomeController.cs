@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Bakery.Models;
+using PierresSweets.Models;
 using System.Collections.Generic;
 using System.Linq;
 
