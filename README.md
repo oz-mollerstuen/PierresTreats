@@ -21,12 +21,7 @@
 
 ## Setup/Installation Requirements
 
-* Install MySQL Community Server and MySQL Workbench. Follow the instructions _[here](https://www.learnhowtoprogram.com/c-and-net/getting-started-with-c/installing-and-configuring-mysql/)_.
-* Clone down the git repo ```https://github.com/ChrisKLoveless/HairSalon.git``` to the ```desktop``` directory
-* Open the project with VSCode or a different source code editor.
-* Restore required packages: change directory to ```HairSalon``` and restore with ```$ dotnet restore```
-* While in the ```HairSalon``` directory use ```$ dotnet build``` to build the program.
-* While in the ```HairSalon``` directory use ```$ dotnet watch run``` to run the program in the browser with a watcher.
+
 
 ## Database Setup
 

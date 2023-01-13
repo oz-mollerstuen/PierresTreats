@@ -1,59 +1,69 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PierresSweets.Models;
 using Microsoft.AspNetCore.Identity;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
 
 namespace PierresSweets
 {
-  class Program
+  public class Startup
   {
-    static void Main(string[] args)
+    public Startup(IWebHostEnvironment env)
     {
+      var builder = new ConfigurationBuilder()
+          .SetBasePath(env.ContentRootPath)
+          .AddJsonFile("appsettings.json");
+      Configuration = builder.Build();
+    }
 
-      WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+    public IConfigurationRoot Configuration { get; set; }
 
-      builder.Services.AddControllersWithViews();
+    public void ConfigureServices(IServiceCollection services)
+    {
+      services.AddMvc();
 
-      builder.Services.AddDbContext<PierresSweetsContext>(
-                        dbContextOptions => dbContextOptions
-                          .UseMySql(
-                            builder.Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(builder.Configuration["ConnectionStrings:DefaultConnection"]
-                          )
-                        )
-                      );
+      services.AddEntityFrameworkMySql()
+        .AddDbContext<PierresSweetsContext>(options => options
+        .UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
+    
+      services.AddIdentity<ApplicationUser, IdentityRole>()
+          .AddEntityFrameworkStores<PierresSweetsContext>()
+          .AddDefaultTokenProviders();
 
-      builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<PierresSweetsContext>().AddDefaultTokenProviders();
-
-        //settings for development environment-----------------------------------------------vv
-      builder.Services.Configure<IdentityOptions>(options =>
+//===================Update when done===========================
+      services.Configure<IdentityOptions>(options =>
       {
         options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 0;
         options.Password.RequireLowercase = false;
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireUppercase = false;
-        options.Password.RequiredLength = 0;
         options.Password.RequiredUniqueChars = 0;
       });
+//===============================================================
+    }
 
-      WebApplication app = builder.Build();
-
-      // app.UseDeveloperExceptionPage();
-      app.UseHttpsRedirection();
-      app.UseStaticFiles();
-
-      app.UseRouting();
-
+    public void Configure(IApplicationBuilder app)
+    {
+      app.UseDeveloperExceptionPage();
       app.UseAuthentication();
+      app.UseRouting();
       app.UseAuthorization();
 
-      app.MapControllerRoute(
-          name: "default",
-          pattern: "{controller=Home}/{action=Index}/{id?}");
+      app.UseEndpoints(routes =>
+      {
+        routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+      });
 
-      app.Run();
+      app.UseStaticFiles();
+      
+      app.Run(async (context) =>
+      {
+        await context.Response.WriteAsync("Hello World!");
+      });
     }
   }
 }
