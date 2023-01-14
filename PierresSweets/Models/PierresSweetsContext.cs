@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
-namespace PierresSweets.Models
-{
-  public class PierresSweetsContext : IdentityDbContext<ApplicationUser>
+namespace PierresSweets.Models{
+
+  public class PierresSweetsContext : IDesignTimeDbContextFactory<PierresSweetsContext>
   {
     public DbSet<Flavor> Flavors { get; set; }
     public DbSet<Treat> Treats { get; set; }
@@ -12,8 +14,9 @@ namespace PierresSweets.Models
     public PierresSweetsContext(DbContextOptions options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
+     {
       optionsBuilder.UseLazyLoadingProxies();
     }
+
   }
 }
