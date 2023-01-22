@@ -1,24 +1,15 @@
-
-
 @{
   Layout = "_Layout";
 }
 
+<h1>Create Treat</h1>
+
 @model PierresSweets.Models.Treat
-
-<h4>Make a Treat</h4>
-
-@using (Html.BeginForm())
+@using (@Html.BeginForm())
 {
-    @Html.LabelFor(model => model.Name)
-    @Html.TextBoxFor(model => model.Name)
-
-    @Html.LabelFor(model => model.Calories)
-    @Html.TextBoxFor(model => model.Calories)
-
-    @Html.Label("Select Flavor")
-    @Html.DropDownList("FlavorId")
-
-    <input type="submit" value="Add" class="btn btn-default" />
+  <h3>Treat: @Html.TextBoxFor(model => model.TreatName, new { placeholder="Treat Name"})</h3>
+  <input type="submit" value="Create" class="btn btn-info">
 }
-<p>@Html.ActionLink("Home", "Index", "Home", null, new{@class="btn btn-secondary"})</p>
+
+<p class="enlarge">@Html.ActionLink("Back to Treats", "Index")</p>
+<p class="enlarge">@Html.ActionLink("Main Menu", "Index", "Home")</p>

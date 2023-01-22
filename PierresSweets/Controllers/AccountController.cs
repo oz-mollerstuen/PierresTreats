@@ -1,5 +1,3 @@
-
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using PierresSweets.Models;
@@ -26,32 +24,6 @@ namespace PierresSweets.Controllers
       return View();
     }
 
-      public ActionResult Login()
-    {
-      return View();
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> Login(LoginViewModel model)
-    {
-      Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: true, lockoutOnFailure: false);
-      if (result.Succeeded)
-      {
-        return RedirectToAction("Index");
-      }
-      else
-      {
-        return View();
-      }
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> LogOff()
-    {
-      await _signInManager.SignOutAsync();
-      return RedirectToAction("Index");
-    }
-
     public IActionResult Register()
     {
       return View();
@@ -60,16 +32,61 @@ namespace PierresSweets.Controllers
     [HttpPost]
     public async Task<ActionResult> Register (RegisterViewModel model)
     {
-      var user = new ApplicationUser { UserName = model.Email };
-      IdentityResult result = await _userManager.CreateAsync(user, model.Password);
-      if (result.Succeeded)
+      if (!ModelState.IsValid)
       {
-        return RedirectToAction("Index");
+        return View(model);
       }
       else
       {
-        return View();
+        ApplicationUser user = new ApplicationUser { UserName = model.Email };
+        IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+        if (result.Succeeded)
+        {
+          return RedirectToAction("Index");
+        }
+        else
+        {
+          foreach (IdentityError error in result.Errors)
+          {
+            ModelState.AddModelError("", error.Description);
+          }
+          return View(model);
+        }
       }
+    }
+
+        public ActionResult Login()
+    {
+      return View();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> Login(LoginViewModel model)
+    {
+      if (!ModelState.IsValid)
+      {
+        return View(model);
+      }
+      else
+      {
+        Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: true, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+          return RedirectToAction("Index");
+        }
+        else
+        {
+          ModelState.AddModelError("", "There is something wrong with your username or password. Please try again.");
+          return View(model);
+        }
+      }
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> LogOff()
+    {
+      await _signInManager.SignOutAsync();
+      return RedirectToAction("Index");
     }
   }
 }

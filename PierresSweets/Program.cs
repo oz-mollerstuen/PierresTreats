@@ -1,69 +1,49 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PierresSweets.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace PierresSweets
 {
-  public class Startup
+  class Program
   {
-    public Startup(IWebHostEnvironment env)
+    static void Main(string[] args)
     {
-      var builder = new ConfigurationBuilder()
-          .SetBasePath(env.ContentRootPath)
-          .AddJsonFile("appsettings.json");
-      Configuration = builder.Build();
-    }
 
-    public IConfigurationRoot Configuration { get; set; }
+      WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddMvc();
+      builder.Services.AddControllersWithViews();
 
-      services.AddEntityFrameworkMySql()
-        .AddDbContext<PierresSweetsContext>(options => options
-        .UseMySql(Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(Configuration["ConnectionStrings:DefaultConnection"])));
-    
-      services.AddIdentity<ApplicationUser, IdentityRole>()
-          .AddEntityFrameworkStores<PierresSweetsContext>()
-          .AddDefaultTokenProviders();
+      builder.Services.AddDbContext<PierresSweetsContext>(
+                        dbContextOptions => dbContextOptions
+                          .UseMySql(
+                            builder.Configuration["ConnectionStrings:DefaultConnection"], ServerVersion.AutoDetect(builder.Configuration["ConnectionStrings:DefaultConnection"]
+                          )
+                        )
+                      );
+      
+      builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<PierresSweetsContext>()
+                .AddDefaultTokenProviders();
 
-//===================Update when done===========================
-      services.Configure<IdentityOptions>(options =>
-      {
-        options.Password.RequireDigit = false;
-        options.Password.RequiredLength = 0;
-        options.Password.RequireLowercase = false;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequiredUniqueChars = 0;
-      });
-//===============================================================
-    }
+      WebApplication app = builder.Build();
 
-    public void Configure(IApplicationBuilder app)
-    {
-      app.UseDeveloperExceptionPage();
-      app.UseAuthentication();
+      // app.UseDeveloperExceptionPage();
+      app.UseHttpsRedirection();
+      app.UseStaticFiles();
+
       app.UseRouting();
+
+      app.UseAuthentication(); 
       app.UseAuthorization();
 
-      app.UseEndpoints(routes =>
-      {
-        routes.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-      });
+      app.MapControllerRoute(
+          name: "default",
+          pattern: "{controller=Home}/{action=Index}/{id?}"
+        );
 
-      app.UseStaticFiles();
-      
-      app.Run(async (context) =>
-      {
-        await context.Response.WriteAsync("Hello World!");
-      });
+      app.Run();
     }
   }
 }

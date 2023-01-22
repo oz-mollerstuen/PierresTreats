@@ -2,20 +2,19 @@
   Layout = "_Layout";
 }
 
+<h1>Edit Flavor</h1>
+
 @model PierresSweets.Models.Flavor
 
-<h2>Edit</h2>
+<h1>Edit Flavor Info Below</h1>
 
-<h4>Edit Flavor: @Html.DisplayFor(model => model.Name)</h4>
-
-@using (Html.BeginForm())
+@using (@Html.BeginForm())
 {
   @Html.HiddenFor(model => model.FlavorId)
-
-  @Html.LabelFor(model => model.Name)
-  @Html.EditorFor(model => model.Name)
-
-  <input type="submit" value="Save" />
+  <li>Name: @Html.EditorFor(model => model.FlavorName, new {placeholder = @Html.DisplayFor(model => model.FlavorName)})</li>
+  
+  <input type="submit" value="Edit" class="btn btn-lg btn-info" style="margin-bottom: 4%;"/>
 }
 
-<p>@Html.ActionLink("Home", "Index", "Home", new { id = Model.FlavorId }, new{@class="btn btn-secondary"})</p>
+<p class="enlarge">@Html.ActionLink("Back to Flavors", "Index")</p>
+<p class="enlarge">@Html.ActionLink("Main Menu", "Index", "Home")</p>

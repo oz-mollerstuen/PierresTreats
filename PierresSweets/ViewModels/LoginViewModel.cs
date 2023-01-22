@@ -1,8 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PierresSweets.ViewModels
 {
-    public class LoginViewModel
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+  public class LoginViewModel
+  {
+    [Required]
+    [EmailAddress]
+    [Display(Name = "Email Address")]
+    public string Email { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+  }
 }
